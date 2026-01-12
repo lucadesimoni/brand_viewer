@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="de">
 <head>
@@ -23,6 +22,10 @@
       --primary: #2563eb;
       --secondary: #0ea5e9;
       --accent: #22c55e;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #3b82f6;
 
       --font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
@@ -36,6 +39,7 @@
       --surface: #101a2e;
       --surface2: #0f1930;
       --text: #e5e7eb;
+      --textLight: #111827;
       --muted: #9ca3af;
       --border: rgba(255,255,255,.12);
 
@@ -125,8 +129,8 @@
       background: color-mix(in srgb, var(--primary) 18%, var(--surface2));
     }
     .btn.danger {
-      border-color: color-mix(in srgb, #ef4444 55%, var(--border));
-      background: color-mix(in srgb, #ef4444 14%, var(--surface2));
+      border-color: color-mix(in srgb, var(--error) 55%, var(--border));
+      background: color-mix(in srgb, var(--error) 14%, var(--surface2));
     }
 
     main .grid {
@@ -195,6 +199,16 @@
       color: var(--text);
       outline: none;
       font-size: 13px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: color-mix(in srgb, var(--primary) 60%, var(--border));
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+    }
+    .field input:invalid:not(:placeholder-shown) {
+      border-color: var(--error);
     }
     .field textarea { min-height: 70px; resize: vertical; }
     .hint {
@@ -293,6 +307,10 @@
     .badge.primary { border-color: color-mix(in srgb, var(--primary) 60%, var(--border)); background: color-mix(in srgb, var(--primary) 16%, var(--surface2)); }
     .badge.secondary { border-color: color-mix(in srgb, var(--secondary) 60%, var(--border)); background: color-mix(in srgb, var(--secondary) 16%, var(--surface2)); }
     .badge.accent { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 16%, var(--surface2)); }
+    .badge.success { border-color: color-mix(in srgb, var(--success) 60%, var(--border)); background: color-mix(in srgb, var(--success) 16%, var(--surface2)); }
+    .badge.warning { border-color: color-mix(in srgb, var(--warning) 60%, var(--border)); background: color-mix(in srgb, var(--warning) 16%, var(--surface2)); }
+    .badge.error { border-color: color-mix(in srgb, var(--error) 60%, var(--border)); background: color-mix(in srgb, var(--error) 16%, var(--surface2)); }
+    .badge.info { border-color: color-mix(in srgb, var(--info) 60%, var(--border)); background: color-mix(in srgb, var(--info) 16%, var(--surface2)); }
 
     .ctaRow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
@@ -300,19 +318,30 @@
       border: 1px solid transparent;
       background: var(--primary);
       color: white;
-      border-radius: 14px;
+      border-radius: var(--radius);
       padding: 10px 14px;
       font-size: 13px;
       cursor: pointer;
+      transition: transform .06s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .btnSolid:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow2);
+      opacity: 0.9;
     }
     .btnOutline {
       border: 1px solid color-mix(in srgb, var(--primary) 60%, var(--border));
       background: transparent;
       color: var(--text);
-      border-radius: 14px;
+      border-radius: var(--radius);
       padding: 10px 14px;
       font-size: 13px;
       cursor: pointer;
+      transition: transform .06s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btnOutline:hover {
+      transform: translateY(-1px);
+      background: color-mix(in srgb, var(--primary) 8%, var(--surface2));
     }
 
     .componentGrid {
@@ -340,6 +369,16 @@
       margin: 0 0 8px 0;
       font-size: 14px;
     }
+    .panel h1, .panel h2, .panel h3, .panel h4, .panel h5, .panel h6 {
+      color: var(--text);
+      margin-top: 0;
+    }
+    .panel h1 { font-size: 32px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
+    .panel h2 { font-size: 24px; font-weight: 600; line-height: 1.3; margin-bottom: 10px; }
+    .panel h3 { font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: 8px; }
+    .panel h4 { font-size: 18px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+    .panel h5 { font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+    .panel h6 { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
     .panel p {
       margin: 0;
       color: var(--muted);
@@ -352,12 +391,13 @@
       gap: 10px;
       margin-top: 10px;
     }
-    @media (max-width: 980px) { .kpiRow { grid-template-columns: 1fr; } }
+    @media (max-width: 980px) { .kpiRow { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .kpiRow { grid-template-columns: 1fr; } }
 
     .kpi {
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius);
       padding: 12px;
     }
     .kpi .label { color: var(--muted); font-size: 12px; }
@@ -369,7 +409,7 @@
       width: 100%;
       border-collapse: collapse;
       overflow: hidden;
-      border-radius: 14px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--surface2);
     }
@@ -411,11 +451,34 @@
     .small { font-size: 12px; color: var(--muted); }
     .pill {
       border: 1px dashed var(--border);
-      border-radius: 14px;
+      border-radius: var(--radius);
       padding: 10px;
       background: color-mix(in srgb, var(--surface2) 90%, transparent);
     }
     .flex { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    
+    .bgSwatch {
+      width: 100%;
+      height: 60px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .bgSwatch.primary { background: var(--primary); color: white; }
+    .bgSwatch.secondary { background: var(--secondary); color: white; }
+    .bgSwatch.accent { background: var(--accent); color: white; }
+    .bgSwatch.success { background: var(--success); color: white; }
+    .bgSwatch.warning { background: var(--warning); color: white; }
+    .bgSwatch.error { background: var(--error); color: white; }
+    .bgSwatch.info { background: var(--info); color: white; }
+    .bgSwatch.surface { background: var(--surface); }
+    .bgSwatch.surface2 { background: var(--surface2); }
+    .bgSwatch.bg { background: var(--bg); }
   </style>
 </head>
 
@@ -496,53 +559,103 @@
                 </div>
               </div>
               <div class="card-bd">
+                <div class="row1" style="margin-bottom: 14px;">
+                  <div class="small" style="color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Brand Colors</div>
+                </div>
                 <div class="row">
                   <div class="field">
                     <label>Primary</label>
                     <div class="colorLine">
-                      <input id="primary" type="text" placeholder="#2563eb" class="mono" />
+                      <input id="primary" type="text" placeholder="#2563eb" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="primaryPicker" type="color" /></div>
                     </div>
                   </div>
                   <div class="field">
                     <label>Secondary</label>
                     <div class="colorLine">
-                      <input id="secondary" type="text" placeholder="#0ea5e9" class="mono" />
+                      <input id="secondary" type="text" placeholder="#0ea5e9" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="secondaryPicker" type="color" /></div>
                     </div>
                   </div>
                   <div class="field">
                     <label>Accent</label>
                     <div class="colorLine">
-                      <input id="accent" type="text" placeholder="#22c55e" class="mono" />
+                      <input id="accent" type="text" placeholder="#22c55e" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="accentPicker" type="color" /></div>
                     </div>
                   </div>
+                </div>
+
+                <div class="row1" style="margin: 18px 0 14px 0;">
+                  <div class="small" style="color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Semantic Colors</div>
+                </div>
+                <div class="row">
+                  <div class="field">
+                    <label>Success</label>
+                    <div class="colorLine">
+                      <input id="success" type="text" placeholder="#22c55e" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
+                      <div class="swatch"><input id="successPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Warning</label>
+                    <div class="colorLine">
+                      <input id="warning" type="text" placeholder="#f59e0b" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
+                      <div class="swatch"><input id="warningPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Error</label>
+                    <div class="colorLine">
+                      <input id="error" type="text" placeholder="#ef4444" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
+                      <div class="swatch"><input id="errorPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Info</label>
+                    <div class="colorLine">
+                      <input id="info" type="text" placeholder="#3b82f6" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
+                      <div class="swatch"><input id="infoPicker" type="color" /></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row1" style="margin: 18px 0 14px 0;">
+                  <div class="small" style="color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Background & Text Colors</div>
+                </div>
+                <div class="row">
                   <div class="field">
                     <label>Background (Light)</label>
                     <div class="colorLine">
-                      <input id="bgLight" type="text" placeholder="#ffffff" class="mono" />
+                      <input id="bgLight" type="text" placeholder="#ffffff" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="bgLightPicker" type="color" /></div>
                     </div>
                   </div>
                   <div class="field">
                     <label>Background (Dark)</label>
                     <div class="colorLine">
-                      <input id="bgDark" type="text" placeholder="#0b1220" class="mono" />
+                      <input id="bgDark" type="text" placeholder="#0b1220" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="bgDarkPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Text (Light)</label>
+                    <div class="colorLine">
+                      <input id="textLight" type="text" placeholder="#111827" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
+                      <div class="swatch"><input id="textLightPicker" type="color" /></div>
                     </div>
                   </div>
                   <div class="field">
                     <label>Text (Dark)</label>
                     <div class="colorLine">
-                      <input id="textDark" type="text" placeholder="#e5e7eb" class="mono" />
+                      <input id="textDark" type="text" placeholder="#e5e7eb" class="mono" pattern="^#[0-9A-Fa-f]{6}$" />
                       <div class="swatch"><input id="textDarkPicker" type="color" /></div>
                     </div>
                   </div>
                 </div>
 
-                <div class="hint">
-                  Tipp: Primary/Secondary/Accent prägen Buttons, Badges und Highlights.
+                <div class="hint" style="margin-top: 14px;">
+                  Tipp: Brand Colors prägen Buttons, Badges und Highlights. Semantic Colors für Status-Meldungen. Background & Text für Theme-Anpassungen.
                 </div>
               </div>
             </div>
@@ -662,6 +775,10 @@
             <span class="badge primary">Primary</span>
             <span class="badge secondary">Secondary</span>
             <span class="badge accent">Accent</span>
+            <span class="badge success">Success</span>
+            <span class="badge warning">Warning</span>
+            <span class="badge error">Error</span>
+            <span class="badge info">Info</span>
             <span class="badge">Neutral</span>
           </div>
 
@@ -678,12 +795,39 @@
               <div class="label">Accent</div>
               <div class="value mono" id="kpiAccent">#22c55e</div>
             </div>
+            <div class="kpi">
+              <div class="label">Success</div>
+              <div class="value mono" id="kpiSuccess">#22c55e</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Warning</div>
+              <div class="value mono" id="kpiWarning">#f59e0b</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Error</div>
+              <div class="value mono" id="kpiError">#ef4444</div>
+            </div>
           </div>
         </div>
 
         <div class="componentGrid">
+          <div class="panel col12">
+            <h3>All Heading Levels</h3>
+            <div style="margin-top:12px; display: grid; gap: 12px;">
+              <h1>Heading 1 (H1) - Main Title</h1>
+              <h2>Heading 2 (H2) - Section Title</h2>
+              <h3>Heading 3 (H3) - Subsection Title</h3>
+              <h4>Heading 4 (H4) - Minor Section</h4>
+              <h5>Heading 5 (H5) - Small Heading</h5>
+              <h6>Heading 6 (H6) - Smallest Heading</h6>
+              <p style="margin-top: 8px;">Body text: The quick brown fox jumps over the lazy dog. 0123456789</p>
+              <p><strong>Strong / Bold text</strong> and <em>Italic text</em> and <u>Underlined text</u></p>
+              <p class="small">Small / muted text sample.</p>
+            </div>
+          </div>
+
           <div class="panel col6">
-            <h3>Typography</h3>
+            <h3>Typography Samples</h3>
             <p style="margin-top:8px;">
               <strong style="font-size:18px;">Headline / Strong</strong><br/>
               Body text: The quick brown fox jumps over the lazy dog. 0123456789<br/>
@@ -733,17 +877,33 @@
             </table>
           </div>
 
-          <div class="panel col4">
+          <div class="panel col6">
+            <h3>Background Colors</h3>
+            <div style="margin-top:10px;">
+              <div class="bgSwatch primary">Primary Background</div>
+              <div class="bgSwatch secondary">Secondary Background</div>
+              <div class="bgSwatch accent">Accent Background</div>
+              <div class="bgSwatch success">Success Background</div>
+              <div class="bgSwatch warning">Warning Background</div>
+              <div class="bgSwatch error">Error Background</div>
+              <div class="bgSwatch info">Info Background</div>
+              <div class="bgSwatch surface">Surface Background</div>
+              <div class="bgSwatch surface2">Surface 2 Background</div>
+              <div class="bgSwatch bg">Main Background</div>
+            </div>
+          </div>
+
+          <div class="panel col6">
             <h3>Logo Playground</h3>
             <p>Logo wirkt je nach Hintergrund anders:</p>
             <div class="flex" style="margin-top:10px;">
-              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;">
+              <div style="width:72px;height:72px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;">
                 <img id="logoOnLight" src="" alt="Logo light" style="width:48px;height:48px;object-fit:contain;" />
               </div>
-              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;">
+              <div style="width:72px;height:72px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;">
                 <img id="logoOnBg" src="" alt="Logo bg" style="width:48px;height:48px;object-fit:contain;" />
               </div>
-              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:color-mix(in srgb, var(--primary) 18%, var(--surface2));display:flex;align-items:center;justify-content:center;">
+              <div style="width:72px;height:72px;border-radius:var(--radius);border:1px solid var(--border);background:color-mix(in srgb, var(--primary) 18%, var(--surface2));display:flex;align-items:center;justify-content:center;">
                 <img id="logoOnPrimary" src="" alt="Logo primary" style="width:48px;height:48px;object-fit:contain;" />
               </div>
             </div>
@@ -757,7 +917,7 @@
           <div class="panel col12">
             <h3>Aktive Konfiguration (JSON)</h3>
             <div class="small">Sie können diese Config exportieren oder als Vorlage verwenden.</div>
-            <pre id="activeJson" class="mono" style="margin-top:10px; background: var(--surface2); border:1px solid var(--border); border-radius:14px; padding:12px; overflow:auto; max-height: 320px;"></pre>
+            <pre id="activeJson" class="mono" style="margin-top:10px; background: var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:12px; overflow:auto; max-height: 320px;"></pre>
           </div>
         </div>
       </section>
@@ -782,8 +942,13 @@
         primary: "#2563eb",
         secondary: "#0ea5e9",
         accent: "#22c55e",
+        success: "#22c55e",
+        warning: "#f59e0b",
+        error: "#ef4444",
+        info: "#3b82f6",
         bgLight: "#ffffff",
         bgDark: "#0b1220",
+        textLight: "#111827",
         textDark: "#e5e7eb"
       },
       typography: {
@@ -893,6 +1058,10 @@
       root.style.setProperty("--primary", normalizeHex(c.primary, DEFAULT_CONFIG.colors.primary));
       root.style.setProperty("--secondary", normalizeHex(c.secondary, DEFAULT_CONFIG.colors.secondary));
       root.style.setProperty("--accent", normalizeHex(c.accent, DEFAULT_CONFIG.colors.accent));
+      root.style.setProperty("--success", normalizeHex(c.success, DEFAULT_CONFIG.colors.success));
+      root.style.setProperty("--warning", normalizeHex(c.warning, DEFAULT_CONFIG.colors.warning));
+      root.style.setProperty("--error", normalizeHex(c.error, DEFAULT_CONFIG.colors.error));
+      root.style.setProperty("--info", normalizeHex(c.info, DEFAULT_CONFIG.colors.info));
 
       // backgrounds per theme
       const bgLight = normalizeHex(c.bgLight, DEFAULT_CONFIG.colors.bgLight);
@@ -900,10 +1069,13 @@
       const textDark = normalizeHex(c.textDark, DEFAULT_CONFIG.colors.textDark);
 
       // Apply to theme blocks
+      const textLight = normalizeHex(c.textLight, DEFAULT_CONFIG.colors.textLight);
+      root.style.setProperty("--textLight", textLight);
+      
       // Light theme overrides:
       if (document.body.getAttribute("data-theme") === "light") {
         root.style.setProperty("--bg", bgLight);
-        root.style.setProperty("--text", "#111827");
+        root.style.setProperty("--text", textLight);
       } else {
         root.style.setProperty("--bg", bgDark);
         root.style.setProperty("--text", textDark);
@@ -964,6 +1136,9 @@
       $("kpiPrimary").textContent = normalizeHex(cfg.colors?.primary, DEFAULT_CONFIG.colors.primary);
       $("kpiSecondary").textContent = normalizeHex(cfg.colors?.secondary, DEFAULT_CONFIG.colors.secondary);
       $("kpiAccent").textContent = normalizeHex(cfg.colors?.accent, DEFAULT_CONFIG.colors.accent);
+      $("kpiSuccess").textContent = normalizeHex(cfg.colors?.success, DEFAULT_CONFIG.colors.success);
+      $("kpiWarning").textContent = normalizeHex(cfg.colors?.warning, DEFAULT_CONFIG.colors.warning);
+      $("kpiError").textContent = normalizeHex(cfg.colors?.error, DEFAULT_CONFIG.colors.error);
     }
 
     function renderActiveJson(cfg) {
@@ -982,16 +1157,26 @@
       $("primary").value = cfg.colors?.primary ?? "";
       $("secondary").value = cfg.colors?.secondary ?? "";
       $("accent").value = cfg.colors?.accent ?? "";
+      $("success").value = cfg.colors?.success ?? "";
+      $("warning").value = cfg.colors?.warning ?? "";
+      $("error").value = cfg.colors?.error ?? "";
+      $("info").value = cfg.colors?.info ?? "";
       $("bgLight").value = cfg.colors?.bgLight ?? "";
       $("bgDark").value = cfg.colors?.bgDark ?? "";
+      $("textLight").value = cfg.colors?.textLight ?? "";
       $("textDark").value = cfg.colors?.textDark ?? "";
 
       // sync pickers
       $("primaryPicker").value = normalizeHex(cfg.colors?.primary, DEFAULT_CONFIG.colors.primary);
       $("secondaryPicker").value = normalizeHex(cfg.colors?.secondary, DEFAULT_CONFIG.colors.secondary);
       $("accentPicker").value = normalizeHex(cfg.colors?.accent, DEFAULT_CONFIG.colors.accent);
+      $("successPicker").value = normalizeHex(cfg.colors?.success, DEFAULT_CONFIG.colors.success);
+      $("warningPicker").value = normalizeHex(cfg.colors?.warning, DEFAULT_CONFIG.colors.warning);
+      $("errorPicker").value = normalizeHex(cfg.colors?.error, DEFAULT_CONFIG.colors.error);
+      $("infoPicker").value = normalizeHex(cfg.colors?.info, DEFAULT_CONFIG.colors.info);
       $("bgLightPicker").value = normalizeHex(cfg.colors?.bgLight, DEFAULT_CONFIG.colors.bgLight);
       $("bgDarkPicker").value = normalizeHex(cfg.colors?.bgDark, DEFAULT_CONFIG.colors.bgDark);
+      $("textLightPicker").value = normalizeHex(cfg.colors?.textLight, DEFAULT_CONFIG.colors.textLight);
       $("textDarkPicker").value = normalizeHex(cfg.colors?.textDark, DEFAULT_CONFIG.colors.textDark);
 
       $("googleFontFamily").value = cfg.typography?.googleFontFamily ?? "";
@@ -1049,17 +1234,27 @@
       cfg.colors.primary = normalizeHex($("primary").value, prev.colors.primary);
       cfg.colors.secondary = normalizeHex($("secondary").value, prev.colors.secondary);
       cfg.colors.accent = normalizeHex($("accent").value, prev.colors.accent);
+      cfg.colors.success = normalizeHex($("success").value, prev.colors.success);
+      cfg.colors.warning = normalizeHex($("warning").value, prev.colors.warning);
+      cfg.colors.error = normalizeHex($("error").value, prev.colors.error);
+      cfg.colors.info = normalizeHex($("info").value, prev.colors.info);
 
       cfg.colors.bgLight = normalizeHex($("bgLight").value, prev.colors.bgLight);
       cfg.colors.bgDark = normalizeHex($("bgDark").value, prev.colors.bgDark);
+      cfg.colors.textLight = normalizeHex($("textLight").value, prev.colors.textLight);
       cfg.colors.textDark = normalizeHex($("textDark").value, prev.colors.textDark);
 
       // sync pickers to normalized
       $("primaryPicker").value = cfg.colors.primary;
       $("secondaryPicker").value = cfg.colors.secondary;
       $("accentPicker").value = cfg.colors.accent;
+      $("successPicker").value = cfg.colors.success;
+      $("warningPicker").value = cfg.colors.warning;
+      $("errorPicker").value = cfg.colors.error;
+      $("infoPicker").value = cfg.colors.info;
       $("bgLightPicker").value = cfg.colors.bgLight;
       $("bgDarkPicker").value = cfg.colors.bgDark;
+      $("textLightPicker").value = cfg.colors.textLight;
       $("textDarkPicker").value = cfg.colors.textDark;
 
       // typography
@@ -1079,10 +1274,19 @@
       $(id).addEventListener(eventName, updateFromInputs);
     }
 
-    // Hex picker -> text fields
+    // Hex picker <-> text fields (bidirectional)
     function bindColorPair(textId, pickerId) {
+      // Picker -> Text
       $(pickerId).addEventListener("input", () => {
         $(textId).value = $(pickerId).value.toUpperCase();
+        updateFromInputs();
+      });
+      // Text -> Picker (on valid input)
+      $(textId).addEventListener("input", () => {
+        const val = $(textId).value.trim();
+        if (isValidHex(val)) {
+          $(pickerId).value = val.toUpperCase();
+        }
         updateFromInputs();
       });
     }
@@ -1125,8 +1329,13 @@
           merged.colors.primary = normalizeHex(merged.colors.primary, DEFAULT_CONFIG.colors.primary);
           merged.colors.secondary = normalizeHex(merged.colors.secondary, DEFAULT_CONFIG.colors.secondary);
           merged.colors.accent = normalizeHex(merged.colors.accent, DEFAULT_CONFIG.colors.accent);
+          merged.colors.success = normalizeHex(merged.colors.success, DEFAULT_CONFIG.colors.success);
+          merged.colors.warning = normalizeHex(merged.colors.warning, DEFAULT_CONFIG.colors.warning);
+          merged.colors.error = normalizeHex(merged.colors.error, DEFAULT_CONFIG.colors.error);
+          merged.colors.info = normalizeHex(merged.colors.info, DEFAULT_CONFIG.colors.info);
           merged.colors.bgLight = normalizeHex(merged.colors.bgLight, DEFAULT_CONFIG.colors.bgLight);
           merged.colors.bgDark = normalizeHex(merged.colors.bgDark, DEFAULT_CONFIG.colors.bgDark);
+          merged.colors.textLight = normalizeHex(merged.colors.textLight, DEFAULT_CONFIG.colors.textLight);
           merged.colors.textDark = normalizeHex(merged.colors.textDark, DEFAULT_CONFIG.colors.textDark);
 
           merged.theme.default = (merged.theme.default === "dark") ? "dark" : "light";
@@ -1152,14 +1361,19 @@
       setInputsFromConfig(cfg);
 
       // Bind inputs
-      ["companyName","tagline","notes","defaultTheme","radius","primary","secondary","accent","bgLight","bgDark","textDark","googleFontFamily","cssFontFamily","logoUrl","logoBg"]
+      ["companyName","tagline","notes","defaultTheme","radius","primary","secondary","accent","success","warning","error","info","bgLight","bgDark","textLight","textDark","googleFontFamily","cssFontFamily","logoUrl","logoBg"]
         .forEach(id => bindInput(id, id === "defaultTheme" ? "change" : "input"));
 
       bindColorPair("primary", "primaryPicker");
       bindColorPair("secondary", "secondaryPicker");
       bindColorPair("accent", "accentPicker");
+      bindColorPair("success", "successPicker");
+      bindColorPair("warning", "warningPicker");
+      bindColorPair("error", "errorPicker");
+      bindColorPair("info", "infoPicker");
       bindColorPair("bgLight", "bgLightPicker");
       bindColorPair("bgDark", "bgDarkPicker");
+      bindColorPair("textLight", "textLightPicker");
       bindColorPair("textDark", "textDarkPicker");
 
       // Theme toggle
@@ -1223,4 +1437,4 @@
   </script>
 </body>
 </html>
-```
+
