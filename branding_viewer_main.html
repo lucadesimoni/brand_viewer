@@ -1,0 +1,1226 @@
+```html
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Branding Playground (Light/Dark + Config Upload)</title>
+
+  <!-- Default font (can be overridden by config) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link id="googleFontLink" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f7f7f8;
+      --surface2: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+
+      --primary: #2563eb;
+      --secondary: #0ea5e9;
+      --accent: #22c55e;
+
+      --font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --shadow2: 0 6px 16px rgba(0,0,0,.08);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1220;
+      --surface: #101a2e;
+      --surface2: #0f1930;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: rgba(255,255,255,.12);
+
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --shadow2: 0 6px 16px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 18px 18px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brandline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+    }
+    .brandline img {
+      width: 40px; height: 40px;
+      object-fit: contain;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px;
+    }
+    .brandline .title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .brandline .title strong { font-size: 14px; }
+    .brandline .title span { font-size: 12px; color: var(--muted); }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn, .chip {
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    .btn:hover, .chip:hover {
+      box-shadow: var(--shadow2);
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--border) 50%, var(--primary));
+    }
+    .btn.primary {
+      border-color: color-mix(in srgb, var(--primary) 60%, var(--border));
+      background: color-mix(in srgb, var(--primary) 18%, var(--surface2));
+    }
+    .btn.danger {
+      border-color: color-mix(in srgb, #ef4444 55%, var(--border));
+      background: color-mix(in srgb, #ef4444 14%, var(--surface2));
+    }
+
+    main .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      padding: 18px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 980px) {
+      main .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card .card-hd {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: color-mix(in srgb, var(--surface) 88%, var(--surface2));
+    }
+
+    .card .card-hd h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+    .card .card-hd .sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .card .card-bd { padding: 14px 16px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .row1 { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field input[type="url"],
+    .field input[type="number"],
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      outline: none;
+      font-size: 13px;
+    }
+    .field textarea { min-height: 70px; resize: vertical; }
+    .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .colorLine {
+      display: grid;
+      grid-template-columns: 1fr 44px;
+      gap: 10px;
+      align-items: center;
+    }
+    .swatch {
+      width: 44px; height: 38px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      overflow: hidden;
+    }
+    .swatch input[type="color"] {
+      width: 120%;
+      height: 120%;
+      border: 0;
+      padding: 0;
+      margin: -6px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .preview {
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .heroTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .logoStack {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logoStack img {
+      width: 56px; height: 56px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 8px;
+    }
+
+    .typography {
+      display: grid;
+      gap: 8px;
+    }
+    .typography h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -.4px;
+    }
+    .typography p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 62ch;
+    }
+
+    .badgeRow { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+    }
+    .badge.primary { border-color: color-mix(in srgb, var(--primary) 60%, var(--border)); background: color-mix(in srgb, var(--primary) 16%, var(--surface2)); }
+    .badge.secondary { border-color: color-mix(in srgb, var(--secondary) 60%, var(--border)); background: color-mix(in srgb, var(--secondary) 16%, var(--surface2)); }
+    .badge.accent { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 16%, var(--surface2)); }
+
+    .ctaRow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    .btnSolid {
+      border: 1px solid transparent;
+      background: var(--primary);
+      color: white;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btnOutline {
+      border: 1px solid color-mix(in srgb, var(--primary) 60%, var(--border));
+      background: transparent;
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .componentGrid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .col6 { grid-column: span 6; }
+    .col4 { grid-column: span 4; }
+    .col8 { grid-column: span 8; }
+    .col12 { grid-column: span 12; }
+
+    @media (max-width: 980px) {
+      .col6, .col4, .col8 { grid-column: span 12; }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .panel h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .kpiRow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 980px) { .kpiRow { grid-template-columns: 1fr; } }
+
+    .kpi {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .kpi .label { color: var(--muted); font-size: 12px; }
+    .kpi .value { font-size: 18px; margin-top: 2px; }
+
+    .divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .table th, .table td {
+      padding: 10px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .table th { color: var(--muted); font-weight: 600; }
+    .table tr:last-child td { border-bottom: 0; }
+
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text);
+      display: none;
+      gap: 8px;
+      align-items: center;
+      z-index: 5;
+    }
+    .toast.show { display: inline-flex; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 24%, transparent);
+    }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .small { font-size: 12px; color: var(--muted); }
+    .pill {
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      background: color-mix(in srgb, var(--surface2) 90%, transparent);
+    }
+    .flex { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  </style>
+</head>
+
+<body data-theme="light">
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brandline">
+          <img id="headerLogo" alt="Logo" src="" />
+          <div class="title">
+            <strong id="headerCompanyName">Branding Playground</strong>
+            <span id="headerTagline">Farben, Fonts, Logos, UI-Komponenten testen</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="chip" id="themeToggle" title="Theme umschalten">🌗 Theme</button>
+
+          <label class="btn primary" title="Konfigurationsdatei (JSON) laden">
+            ⬆️ Config laden
+            <input id="configUpload" type="file" accept="application/json" hidden />
+          </label>
+
+          <button class="btn" id="exportConfig">⬇️ Config exportieren</button>
+          <button class="btn danger" id="resetAll">↩︎ Reset</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <!-- LEFT: Controls -->
+      <section class="card">
+        <div class="card-hd">
+          <div>
+            <h2>Branding Einstellungen</h2>
+            <div class="sub">Änderungen wirken sofort auf die Vorschau</div>
+          </div>
+        </div>
+
+        <div class="card-bd">
+          <div class="row1">
+            <div class="field">
+              <label>Company Name</label>
+              <input id="companyName" type="text" placeholder="z.B. Alpine Rail AG" />
+            </div>
+
+            <div class="field">
+              <label>Tagline</label>
+              <input id="tagline" type="text" placeholder="z.B. Engineering, simplified." />
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label>Theme Default</label>
+                <select id="defaultTheme">
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+                <div class="hint">Setzt das aktive Theme. Umschalten oben rechts.</div>
+              </div>
+
+              <div class="field">
+                <label>Border Radius (px)</label>
+                <input id="radius" type="number" min="6" max="28" step="1" />
+                <div class="hint">Wirkt auf Cards/Buttons.</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="card-hd">
+                <div>
+                  <h2>Farben</h2>
+                  <div class="sub">Hex #RRGGBB</div>
+                </div>
+              </div>
+              <div class="card-bd">
+                <div class="row">
+                  <div class="field">
+                    <label>Primary</label>
+                    <div class="colorLine">
+                      <input id="primary" type="text" placeholder="#2563eb" class="mono" />
+                      <div class="swatch"><input id="primaryPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Secondary</label>
+                    <div class="colorLine">
+                      <input id="secondary" type="text" placeholder="#0ea5e9" class="mono" />
+                      <div class="swatch"><input id="secondaryPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Accent</label>
+                    <div class="colorLine">
+                      <input id="accent" type="text" placeholder="#22c55e" class="mono" />
+                      <div class="swatch"><input id="accentPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Background (Light)</label>
+                    <div class="colorLine">
+                      <input id="bgLight" type="text" placeholder="#ffffff" class="mono" />
+                      <div class="swatch"><input id="bgLightPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Background (Dark)</label>
+                    <div class="colorLine">
+                      <input id="bgDark" type="text" placeholder="#0b1220" class="mono" />
+                      <div class="swatch"><input id="bgDarkPicker" type="color" /></div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Text (Dark)</label>
+                    <div class="colorLine">
+                      <input id="textDark" type="text" placeholder="#e5e7eb" class="mono" />
+                      <div class="swatch"><input id="textDarkPicker" type="color" /></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hint">
+                  Tipp: Primary/Secondary/Accent prägen Buttons, Badges und Highlights.
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="card-hd">
+                <div>
+                  <h2>Schrift</h2>
+                  <div class="sub">Google Fonts oder System-Font</div>
+                </div>
+              </div>
+
+              <div class="card-bd">
+                <div class="row1">
+                  <div class="field">
+                    <label>Google Font Family (z.B. Inter, Roboto, IBM Plex Sans)</label>
+                    <input id="googleFontFamily" type="text" placeholder="Inter" />
+                    <div class="hint">Lädt automatisch von Google Fonts. Leer = System-Font.</div>
+                  </div>
+
+                  <div class="field">
+                    <label>CSS font-family (optional override)</label>
+                    <input id="cssFontFamily" type="text" placeholder='"Inter", system-ui, sans-serif' />
+                    <div class="hint">Wenn gesetzt, überschreibt diese Angabe die Font-Stack.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="card-hd">
+                <div>
+                  <h2>Logos</h2>
+                  <div class="sub">URL oder Upload</div>
+                </div>
+              </div>
+
+              <div class="card-bd">
+                <div class="row1">
+                  <div class="field">
+                    <label>Logo URL (z.B. https://.../logo.svg)</label>
+                    <input id="logoUrl" type="url" placeholder="https://example.com/logo.svg" />
+                  </div>
+
+                  <div class="row">
+                    <div class="field">
+                      <label>Logo Upload (SVG/PNG/JPG)</label>
+                      <input id="logoUpload" type="file" accept="image/*,.svg" />
+                      <div class="hint">Wird lokal als Data-URL gespeichert.</div>
+                    </div>
+                    <div class="field">
+                      <label>Favicon Upload (PNG/ICO)</label>
+                      <input id="faviconUpload" type="file" accept="image/*,.ico" />
+                      <div class="hint">Setzt das Tab-Icon.</div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Logo Background (für Vorschau)</label>
+                    <input id="logoBg" type="text" class="mono" placeholder="#ffffff00 (transparent)" />
+                    <div class="hint">Optional, z.B. #ffffff oder transparent.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="card-hd">
+                <div>
+                  <h2>Zusatz / Notes</h2>
+                  <div class="sub">Freitext</div>
+                </div>
+              </div>
+              <div class="card-bd">
+                <div class="field">
+                  <label>Brand Notes</label>
+                  <textarea id="notes" placeholder="z.B. Tonalität, Bildsprache, Do/Don'ts"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="pill">
+              <div class="small"><strong>Config Format:</strong> JSON (siehe Export). Upload aktualisiert alle Felder.</div>
+              <div class="small mono" id="storageInfo"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Preview -->
+      <section class="preview">
+        <div class="hero">
+          <div class="heroTop">
+            <div class="logoStack">
+              <img id="previewLogo" alt="Logo" src="" />
+              <div class="typography">
+                <h1 id="previewH1">Branding Preview</h1>
+                <p id="previewP">Hier sehen Sie live, wie Ihre Farben, Fonts und Logos auf typische UI-Elemente wirken.</p>
+              </div>
+            </div>
+
+            <div class="ctaRow">
+              <button class="btnSolid" id="primaryBtn">Primary Action</button>
+              <button class="btnOutline" id="secondaryBtn">Secondary</button>
+            </div>
+          </div>
+
+          <div class="badgeRow">
+            <span class="badge primary">Primary</span>
+            <span class="badge secondary">Secondary</span>
+            <span class="badge accent">Accent</span>
+            <span class="badge">Neutral</span>
+          </div>
+
+          <div class="kpiRow">
+            <div class="kpi">
+              <div class="label">Primary</div>
+              <div class="value mono" id="kpiPrimary">#2563eb</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Secondary</div>
+              <div class="value mono" id="kpiSecondary">#0ea5e9</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Accent</div>
+              <div class="value mono" id="kpiAccent">#22c55e</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="componentGrid">
+          <div class="panel col6">
+            <h3>Typography</h3>
+            <p style="margin-top:8px;">
+              <strong style="font-size:18px;">Headline / Strong</strong><br/>
+              Body text: The quick brown fox jumps over the lazy dog. 0123456789<br/>
+              <span class="small">Small / muted text sample.</span>
+            </p>
+          </div>
+
+          <div class="panel col6">
+            <h3>Form Elements</h3>
+            <div class="row1" style="margin-top:10px;">
+              <input type="text" placeholder="Text input" />
+              <select>
+                <option>Dropdown option</option>
+                <option>Another option</option>
+              </select>
+              <textarea placeholder="Textarea"></textarea>
+            </div>
+          </div>
+
+          <div class="panel col8">
+            <h3>Table</h3>
+            <table class="table" style="margin-top:10px;">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Status</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Design System</td>
+                  <td><span class="badge primary">Active</span></td>
+                  <td>Brand</td>
+                </tr>
+                <tr>
+                  <td>Website</td>
+                  <td><span class="badge secondary">In progress</span></td>
+                  <td>Marketing</td>
+                </tr>
+                <tr>
+                  <td>App</td>
+                  <td><span class="badge accent">Ready</span></td>
+                  <td>Product</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel col4">
+            <h3>Logo Playground</h3>
+            <p>Logo wirkt je nach Hintergrund anders:</p>
+            <div class="flex" style="margin-top:10px;">
+              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;">
+                <img id="logoOnLight" src="" alt="Logo light" style="width:48px;height:48px;object-fit:contain;" />
+              </div>
+              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;">
+                <img id="logoOnBg" src="" alt="Logo bg" style="width:48px;height:48px;object-fit:contain;" />
+              </div>
+              <div style="width:72px;height:72px;border-radius:16px;border:1px solid var(--border);background:color-mix(in srgb, var(--primary) 18%, var(--surface2));display:flex;align-items:center;justify-content:center;">
+                <img id="logoOnPrimary" src="" alt="Logo primary" style="width:48px;height:48px;object-fit:contain;" />
+              </div>
+            </div>
+          </div>
+
+          <div class="panel col12">
+            <h3>Brand Notes</h3>
+            <p id="previewNotes" class="small">—</p>
+          </div>
+
+          <div class="panel col12">
+            <h3>Aktive Konfiguration (JSON)</h3>
+            <div class="small">Sie können diese Config exportieren oder als Vorlage verwenden.</div>
+            <pre id="activeJson" class="mono" style="margin-top:10px; background: var(--surface2); border:1px solid var(--border); border-radius:14px; padding:12px; overflow:auto; max-height: 320px;"></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"><span class="dot"></span><span id="toastMsg">Gespeichert</span></div>
+
+  <script>
+    // ---------- Defaults ----------
+    const DEFAULT_CONFIG = {
+      meta: {
+        companyName: "Branding Playground",
+        tagline: "Farben, Fonts, Logos, UI-Komponenten testen",
+        notes: ""
+      },
+      theme: {
+        default: "light",
+        radius: 14
+      },
+      colors: {
+        primary: "#2563eb",
+        secondary: "#0ea5e9",
+        accent: "#22c55e",
+        bgLight: "#ffffff",
+        bgDark: "#0b1220",
+        textDark: "#e5e7eb"
+      },
+      typography: {
+        googleFontFamily: "Inter",
+        cssFontFamily: "" // if empty: auto build from googleFontFamily
+      },
+      assets: {
+        logo: "",     // can be URL or data URL
+        favicon: "",  // can be URL or data URL
+        logoBg: "transparent"
+      }
+    };
+
+    const STORAGE_KEY = "branding_playground_config_v1";
+
+    // ---------- Helpers ----------
+    const $ = (id) => document.getElementById(id);
+
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+    function isValidHex(hex) {
+      return /^#([0-9a-fA-F]{6})$/.test((hex || "").trim());
+    }
+
+    function normalizeHex(hex, fallback) {
+      const v = (hex || "").trim();
+      return isValidHex(v) ? v.toUpperCase() : fallback;
+    }
+
+    function showToast(msg = "OK") {
+      $("toastMsg").textContent = msg;
+      const t = $("toast");
+      t.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => t.classList.remove("show"), 1600);
+    }
+
+    function deepMerge(target, source) {
+      // minimal safe deep merge for plain objects
+      const out = Array.isArray(target) ? [...target] : { ...target };
+      for (const [k, v] of Object.entries(source || {})) {
+        if (v && typeof v === "object" && !Array.isArray(v)) {
+          out[k] = deepMerge(out[k] || {}, v);
+        } else {
+          out[k] = v;
+        }
+      }
+      return out;
+    }
+
+    function downloadTextFile(filename, text) {
+      const blob = new Blob([text], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function setFavicon(dataUrlOrUrl) {
+      let link = document.querySelector("link[rel='icon']");
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+      if (dataUrlOrUrl && typeof dataUrlOrUrl === "string") {
+        link.href = dataUrlOrUrl;
+      }
+    }
+
+    function setGoogleFont(family) {
+      const clean = (family || "").trim();
+      const link = $("googleFontLink");
+      if (!clean) {
+        // fallback to system font
+        if (link) link.href = "about:blank";
+        return;
+      }
+      const encoded = encodeURIComponent(clean).replace(/%20/g, "+");
+      link.href = `https://fonts.googleapis.com/css2?family=${encoded}:wght@300;400;600;700&display=swap`;
+    }
+
+    function applyCssVars(cfg) {
+      const root = document.documentElement;
+
+      // radius
+      const r = clamp(Number(cfg.theme?.radius ?? DEFAULT_CONFIG.theme.radius), 6, 28);
+      root.style.setProperty("--radius", r + "px");
+
+      // typography
+      const gf = (cfg.typography?.googleFontFamily ?? "").trim();
+      const cssFF = (cfg.typography?.cssFontFamily ?? "").trim();
+      setGoogleFont(gf);
+
+      const stack = cssFF
+        ? cssFF
+        : (gf ? `"${gf}", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`
+              : `system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`);
+      root.style.setProperty("--font-family", stack);
+
+      // brand colors
+      const c = cfg.colors || {};
+      root.style.setProperty("--primary", normalizeHex(c.primary, DEFAULT_CONFIG.colors.primary));
+      root.style.setProperty("--secondary", normalizeHex(c.secondary, DEFAULT_CONFIG.colors.secondary));
+      root.style.setProperty("--accent", normalizeHex(c.accent, DEFAULT_CONFIG.colors.accent));
+
+      // backgrounds per theme
+      const bgLight = normalizeHex(c.bgLight, DEFAULT_CONFIG.colors.bgLight);
+      const bgDark = normalizeHex(c.bgDark, DEFAULT_CONFIG.colors.bgDark);
+      const textDark = normalizeHex(c.textDark, DEFAULT_CONFIG.colors.textDark);
+
+      // Apply to theme blocks
+      // Light theme overrides:
+      if (document.body.getAttribute("data-theme") === "light") {
+        root.style.setProperty("--bg", bgLight);
+        root.style.setProperty("--text", "#111827");
+      } else {
+        root.style.setProperty("--bg", bgDark);
+        root.style.setProperty("--text", textDark);
+      }
+    }
+
+    function applyTheme(cfg) {
+      const t = (cfg.theme?.default || "light") === "dark" ? "dark" : "light";
+      document.body.setAttribute("data-theme", t);
+      // after setting theme, re-apply vars (bg/text depend on theme)
+      applyCssVars(cfg);
+    }
+
+    function applyAssets(cfg) {
+      const logo = cfg.assets?.logo || "";
+      const favicon = cfg.assets?.favicon || "";
+      const logoBg = (cfg.assets?.logoBg || "transparent").trim();
+
+      // Header / preview logos
+      for (const id of ["headerLogo", "previewLogo", "logoOnLight", "logoOnBg", "logoOnPrimary"]) {
+        const el = $(id);
+        el.src = logo || makePlaceholderLogo();
+        el.style.background = logoBg || "transparent";
+      }
+
+      // favicon
+      if (favicon) setFavicon(favicon);
+
+      // also set header text
+      $("headerCompanyName").textContent = cfg.meta?.companyName || DEFAULT_CONFIG.meta.companyName;
+      $("headerTagline").textContent = cfg.meta?.tagline || DEFAULT_CONFIG.meta.tagline;
+
+      $("previewH1").textContent = cfg.meta?.companyName || "Branding Preview";
+      $("previewP").textContent = cfg.meta?.tagline || "Live Vorschau";
+      $("previewNotes").textContent = (cfg.meta?.notes || "").trim() || "—";
+    }
+
+    function makePlaceholderLogo() {
+      // Simple inline SVG placeholder (data URL)
+      const p = getConfig();
+      const primary = normalizeHex(p.colors?.primary, DEFAULT_CONFIG.colors.primary);
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="${primary}" stop-opacity="0.85"/>
+              <stop offset="1" stop-color="${primary}" stop-opacity="0.35"/>
+            </linearGradient>
+          </defs>
+          <rect x="10" y="10" width="108" height="108" rx="24" fill="url(#g)"/>
+          <path d="M40 78 L64 34 L88 78 Z" fill="white" opacity="0.9"/>
+        </svg>
+      `.trim();
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    }
+
+    function renderKpis(cfg) {
+      $("kpiPrimary").textContent = normalizeHex(cfg.colors?.primary, DEFAULT_CONFIG.colors.primary);
+      $("kpiSecondary").textContent = normalizeHex(cfg.colors?.secondary, DEFAULT_CONFIG.colors.secondary);
+      $("kpiAccent").textContent = normalizeHex(cfg.colors?.accent, DEFAULT_CONFIG.colors.accent);
+    }
+
+    function renderActiveJson(cfg) {
+      $("activeJson").textContent = JSON.stringify(cfg, null, 2);
+      $("storageInfo").textContent = `LocalStorage Key: ${STORAGE_KEY}`;
+    }
+
+    function setInputsFromConfig(cfg) {
+      $("companyName").value = cfg.meta?.companyName ?? "";
+      $("tagline").value = cfg.meta?.tagline ?? "";
+      $("notes").value = cfg.meta?.notes ?? "";
+
+      $("defaultTheme").value = (cfg.theme?.default === "dark") ? "dark" : "light";
+      $("radius").value = Number(cfg.theme?.radius ?? DEFAULT_CONFIG.theme.radius);
+
+      $("primary").value = cfg.colors?.primary ?? "";
+      $("secondary").value = cfg.colors?.secondary ?? "";
+      $("accent").value = cfg.colors?.accent ?? "";
+      $("bgLight").value = cfg.colors?.bgLight ?? "";
+      $("bgDark").value = cfg.colors?.bgDark ?? "";
+      $("textDark").value = cfg.colors?.textDark ?? "";
+
+      // sync pickers
+      $("primaryPicker").value = normalizeHex(cfg.colors?.primary, DEFAULT_CONFIG.colors.primary);
+      $("secondaryPicker").value = normalizeHex(cfg.colors?.secondary, DEFAULT_CONFIG.colors.secondary);
+      $("accentPicker").value = normalizeHex(cfg.colors?.accent, DEFAULT_CONFIG.colors.accent);
+      $("bgLightPicker").value = normalizeHex(cfg.colors?.bgLight, DEFAULT_CONFIG.colors.bgLight);
+      $("bgDarkPicker").value = normalizeHex(cfg.colors?.bgDark, DEFAULT_CONFIG.colors.bgDark);
+      $("textDarkPicker").value = normalizeHex(cfg.colors?.textDark, DEFAULT_CONFIG.colors.textDark);
+
+      $("googleFontFamily").value = cfg.typography?.googleFontFamily ?? "";
+      $("cssFontFamily").value = cfg.typography?.cssFontFamily ?? "";
+
+      $("logoUrl").value = (cfg.assets?.logo && !cfg.assets.logo.startsWith("data:")) ? cfg.assets.logo : "";
+      $("logoBg").value = cfg.assets?.logoBg ?? "transparent";
+    }
+
+    function getConfig() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(DEFAULT_CONFIG);
+      try {
+        const parsed = JSON.parse(raw);
+        return deepMerge(structuredClone(DEFAULT_CONFIG), parsed);
+      } catch {
+        return structuredClone(DEFAULT_CONFIG);
+      }
+    }
+
+    function saveConfig(cfg) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+      renderActiveJson(cfg);
+      showToast("Gespeichert");
+    }
+
+    function applyAll(cfg) {
+      applyTheme(cfg);
+      applyCssVars(cfg);
+      applyAssets(cfg);
+      renderKpis(cfg);
+      renderActiveJson(cfg);
+      // also keep placeholder consistent if no logo
+      if (!cfg.assets?.logo) {
+        const ph = makePlaceholderLogo();
+        ["headerLogo","previewLogo","logoOnLight","logoOnBg","logoOnPrimary"].forEach(id => $(id).src = ph);
+      }
+    }
+
+    // ---------- Wiring Inputs -> Config ----------
+    function updateFromInputs() {
+      const cfg = getConfig();
+
+      // meta
+      cfg.meta.companyName = $("companyName").value.trim() || DEFAULT_CONFIG.meta.companyName;
+      cfg.meta.tagline = $("tagline").value.trim() || DEFAULT_CONFIG.meta.tagline;
+      cfg.meta.notes = $("notes").value;
+
+      // theme
+      cfg.theme.default = $("defaultTheme").value === "dark" ? "dark" : "light";
+      cfg.theme.radius = clamp(Number($("radius").value || DEFAULT_CONFIG.theme.radius), 6, 28);
+
+      // colors (normalize where possible, keep user input but correct invalid to previous)
+      const prev = getConfig(); // to keep last valid values
+      cfg.colors.primary = normalizeHex($("primary").value, prev.colors.primary);
+      cfg.colors.secondary = normalizeHex($("secondary").value, prev.colors.secondary);
+      cfg.colors.accent = normalizeHex($("accent").value, prev.colors.accent);
+
+      cfg.colors.bgLight = normalizeHex($("bgLight").value, prev.colors.bgLight);
+      cfg.colors.bgDark = normalizeHex($("bgDark").value, prev.colors.bgDark);
+      cfg.colors.textDark = normalizeHex($("textDark").value, prev.colors.textDark);
+
+      // sync pickers to normalized
+      $("primaryPicker").value = cfg.colors.primary;
+      $("secondaryPicker").value = cfg.colors.secondary;
+      $("accentPicker").value = cfg.colors.accent;
+      $("bgLightPicker").value = cfg.colors.bgLight;
+      $("bgDarkPicker").value = cfg.colors.bgDark;
+      $("textDarkPicker").value = cfg.colors.textDark;
+
+      // typography
+      cfg.typography.googleFontFamily = $("googleFontFamily").value.trim();
+      cfg.typography.cssFontFamily = $("cssFontFamily").value.trim();
+
+      // assets
+      const url = $("logoUrl").value.trim();
+      if (url) cfg.assets.logo = url;
+      cfg.assets.logoBg = $("logoBg").value.trim() || "transparent";
+
+      saveConfig(cfg);
+      applyAll(cfg);
+    }
+
+    function bindInput(id, eventName = "input") {
+      $(id).addEventListener(eventName, updateFromInputs);
+    }
+
+    // Hex picker -> text fields
+    function bindColorPair(textId, pickerId) {
+      $(pickerId).addEventListener("input", () => {
+        $(textId).value = $(pickerId).value.toUpperCase();
+        updateFromInputs();
+      });
+    }
+
+    async function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result || ""));
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    async function handleLogoUpload(file) {
+      const cfg = getConfig();
+      cfg.assets.logo = await readFileAsDataURL(file);
+      $("logoUrl").value = ""; // clear URL if upload used
+      saveConfig(cfg);
+      applyAll(cfg);
+      setInputsFromConfig(cfg);
+      showToast("Logo geladen");
+    }
+
+    async function handleFaviconUpload(file) {
+      const cfg = getConfig();
+      cfg.assets.favicon = await readFileAsDataURL(file);
+      saveConfig(cfg);
+      applyAll(cfg);
+      showToast("Favicon gesetzt");
+    }
+
+    function handleConfigUpload(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const incoming = JSON.parse(String(reader.result || "{}"));
+          const merged = deepMerge(structuredClone(DEFAULT_CONFIG), incoming);
+
+          // normalize essential colors
+          merged.colors.primary = normalizeHex(merged.colors.primary, DEFAULT_CONFIG.colors.primary);
+          merged.colors.secondary = normalizeHex(merged.colors.secondary, DEFAULT_CONFIG.colors.secondary);
+          merged.colors.accent = normalizeHex(merged.colors.accent, DEFAULT_CONFIG.colors.accent);
+          merged.colors.bgLight = normalizeHex(merged.colors.bgLight, DEFAULT_CONFIG.colors.bgLight);
+          merged.colors.bgDark = normalizeHex(merged.colors.bgDark, DEFAULT_CONFIG.colors.bgDark);
+          merged.colors.textDark = normalizeHex(merged.colors.textDark, DEFAULT_CONFIG.colors.textDark);
+
+          merged.theme.default = (merged.theme.default === "dark") ? "dark" : "light";
+          merged.theme.radius = clamp(Number(merged.theme.radius ?? DEFAULT_CONFIG.theme.radius), 6, 28);
+
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          applyAll(merged);
+          setInputsFromConfig(merged);
+          showToast("Config geladen");
+        } catch (e) {
+          console.error(e);
+          showToast("Ungültige JSON-Config");
+          alert("Die hochgeladene Datei ist keine gültige JSON-Config.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ---------- Init ----------
+    (function init() {
+      const cfg = getConfig();
+      applyAll(cfg);
+      setInputsFromConfig(cfg);
+
+      // Bind inputs
+      ["companyName","tagline","notes","defaultTheme","radius","primary","secondary","accent","bgLight","bgDark","textDark","googleFontFamily","cssFontFamily","logoUrl","logoBg"]
+        .forEach(id => bindInput(id, id === "defaultTheme" ? "change" : "input"));
+
+      bindColorPair("primary", "primaryPicker");
+      bindColorPair("secondary", "secondaryPicker");
+      bindColorPair("accent", "accentPicker");
+      bindColorPair("bgLight", "bgLightPicker");
+      bindColorPair("bgDark", "bgDarkPicker");
+      bindColorPair("textDark", "textDarkPicker");
+
+      // Theme toggle
+      $("themeToggle").addEventListener("click", () => {
+        const cfg = getConfig();
+        cfg.theme.default = (document.body.getAttribute("data-theme") === "dark") ? "light" : "dark";
+        saveConfig(cfg);
+        applyAll(cfg);
+        setInputsFromConfig(cfg);
+        showToast("Theme umgeschaltet");
+      });
+
+      // Logo upload
+      $("logoUpload").addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        await handleLogoUpload(file);
+        e.target.value = "";
+      });
+
+      // Favicon upload
+      $("faviconUpload").addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        await handleFaviconUpload(file);
+        e.target.value = "";
+      });
+
+      // Config upload
+      $("configUpload").addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        handleConfigUpload(file);
+        e.target.value = "";
+      });
+
+      // Export
+      $("exportConfig").addEventListener("click", () => {
+        const cfg = getConfig();
+        const name = (cfg.meta?.companyName || "brand").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        downloadTextFile(`${name || "brand"}-config.json`, JSON.stringify(cfg, null, 2));
+        showToast("Config exportiert");
+      });
+
+      // Reset
+      $("resetAll").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        const cfg = structuredClone(DEFAULT_CONFIG);
+        applyAll(cfg);
+        setInputsFromConfig(cfg);
+        showToast("Reset OK");
+      });
+
+      // Demo buttons
+      $("primaryBtn").addEventListener("click", () => showToast("Primary Action"));
+      $("secondaryBtn").addEventListener("click", () => showToast("Secondary Action"));
+
+      // Ensure favicon placeholder if none
+      if (!cfg.assets?.favicon) setFavicon("");
+    })();
+  </script>
+</body>
+</html>
+```
